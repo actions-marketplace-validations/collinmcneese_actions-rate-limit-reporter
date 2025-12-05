@@ -5,22 +5,28 @@
     pull_request:
       branches:
       - main
-      paths-ignore:
-      - '**.md'
-      - '.github/workflows/codeql.yml'
-      - './docs/**'
+      paths:
+        - 'package*.json'
+        - '**/*.js'
+        - '**/*.ts'
+        - '.github/workflows/ci.yml'
 
+  permissions: {}
 
   jobs:
     validation:
       runs-on: ubuntu-latest
+      permissions:
+        id-token: write
+        contents: read
+        attestations: write
       strategy:
         matrix:
-          node-version: [18.x, 20.x]
+          node-version: [20.x, 22.x, 24.x]
       steps:
-        - uses: actions/checkout@v4
+        - uses: actions/checkout@v6
         - name: Use Node.js ${{ matrix.node-version }}
-          uses: actions/setup-node@v3
+          uses: actions/setup-node@v6
           with:
             node-version: ${{ matrix.node-version }}
         - name: Install Dependencies
@@ -36,3 +42,7 @@
               exit 1
             fi
           id: diff
+        - name: Generate artifact attestation
+          uses: actions/attest-build-provenance@v3
+          with:
+            subject-path: './dist'
