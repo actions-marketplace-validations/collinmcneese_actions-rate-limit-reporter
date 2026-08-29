@@ -1,5 +1,5 @@
 ---
-  name: ci
+  name: CI
 
   on:
     pull_request:
@@ -7,6 +7,7 @@
       - main
       paths:
         - 'package*.json'
+        - '*.json'
         - '**/*.js'
         - '**/*.ts'
         - '.github/workflows/ci.yml'
@@ -22,11 +23,11 @@
         attestations: write
       strategy:
         matrix:
-          node-version: [20.x, 22.x, 24.x]
+          node-version: [24.x, 26.x]
       steps:
-        - uses: actions/checkout@v6
+        - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
         - name: Use Node.js ${{ matrix.node-version }}
-          uses: actions/setup-node@v6
+          uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
           with:
             node-version: ${{ matrix.node-version }}
         - name: Install Dependencies
@@ -43,6 +44,6 @@
             fi
           id: diff
         - name: Generate artifact attestation
-          uses: actions/attest-build-provenance@v4
+          uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
           with:
             subject-path: './dist'
